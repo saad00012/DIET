@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dnyanshree Institute of Engineering & Technology — DIET Satara</title>
+  <meta name="description" content="Dnyanshree Institute of Engineering & Technology (DIET), Satara — NAAC B+ accredited, AICTE approved, affiliated to DBATU.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  
+  <style>
+    /* Custom styles for new index page overriding defaults */
+    
+    /* 1. Hero overrides */
+    #hero {
+      min-height: 85vh; /* Provide a good viewing height for images */
+      padding: 0;
+      display: block; /* Override original flex display */
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    /* Remove blue overlay */
+    .hero-bg::after, .hero-bg::before {
+      display: none !important;
+    }
+    .hero-orb, .hero-grid {
+      display: none; /* Hide original overlays/orbs for clarity */
+    }
+    
+    /* 2. Image Slider */
+    .hero-slider {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--ink);
+    }
+    .hero-slider .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      z-index: 1;
+    }
+    .hero-slider .slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    
+    /* Match wave color to the text section below */
+    .hero-wave svg path {
+      fill: var(--ink) !important;
+    }
+    
+    /* 3. Hero Content Section below Hero */
+    #hero-content {
+      background: linear-gradient(to bottom, var(--ink) 0%, var(--navy-m) 100%) !important;
+      position: relative;
+      z-index: 5;
+      overflow: hidden;
+    }
+    #hero-content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(200,155,60,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+    #hero-content::after {
+      content: '';
+      position: absolute;
+      top: -250px;
+      right: -150px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,155,60,0.15) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    #hero-content .hero-inner {
+      padding: 2rem 4% 5rem; /* Reduced top padding */
+    }
+    
+    /* Replicate #hero h1 styles for the new section block */
+    #hero-content h1 {
+      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -.5px;
+      margin-bottom: 1.4rem;
+    }
+    #hero-content h1 em {
+      font-style: italic;
+      color: var(--gold);
+      text-shadow: 0 0 40px rgba(200,155,60,.4);
+    }
+    
+    /* 3.5 Section Waves & Curves */
+    .shape-divider-bottom, .shape-divider-top, .hero-wave {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .shape-divider-bottom, .hero-wave { bottom: -1px; }
+    .shape-divider-top { top: -1px; }
+    .shape-divider-bottom svg, .shape-divider-top svg, .hero-wave svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 60px;
+    }
+    .shape-divider-top svg { transform: rotate(180deg); }
+    
+    /* Remove straight horizontal borders to ensure smooth blends */
+    #success-ribbon, .rankers-strip { border: none !important; }
+
+    /* Animated Hero Wave Loop - Seamless Fix */
+    @keyframes waveLoop {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .wave-track {
+      display: flex;
+      width: 200%;
+      animation: waveLoop 8s linear infinite; /* Increased Speed */
+    }
+    .wave-track svg {
+      width: 50% !important;
+      height: 120px !important;
+    }
+    
+    /* 4. Admission Popup Card */
+    .admission-popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 27, 42, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 1rem;
+    }
+    .admission-popup.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .admission-popup-content {
+      background: var(--navy);
+      border: 2px solid var(--gold);
+      border-radius: 24px;
+      padding: 0;
+      text-align: left;
+      position: relative;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      overflow: hidden;
+    }
+    .admission-popup.show .admission-popup-content {
+      transform: scale(1) translateY(0);
+    }
+    .ap-image-side {
+      flex: 1;
+      background: url('https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg') center/cover;
+      position: relative;
+    }
+    .ap-image-side::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent, var(--navy));
+    }
+    .ap-form-side {
+      flex: 1.2;
+      padding: 2.5rem;
+      background: var(--navy);
+    }
+    .ap-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+    .ap-close:hover {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--gold);
+      transform: rotate(90deg);
+    }
+    .ap-form-side h2 {
+      color: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+    .ap-form-side h2 em {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .ap-form-side p {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .ap-form-side input, .ap-form-side select {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 0.85rem;
+      transition: all 0.2s;
+    }
+    .ap-form-side input::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    .ap-form-side input:focus, .ap-form-side select:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: rgba(200,155,60,0.06);
+      box-shadow: 0 0 0 3px rgba(200,155,60,0.1);
+    }
+    .ap-form-side select option {
+      background: var(--ink);
+      color: #fff;
+    }
+    @media (max-width: 768px) {
+      .ap-image-side { display: none; }
+      .admission-popup-content { max-width: 450px; }
+      #hero { min-height: 60vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header Placeholder -->
+<div id="header-placeholder"></div>
+
+<!-- SIDE NAVIGATION DOTS -->
+<div id="side-nav">
+  <a href="#hero"           data-s="hero"><span class="lbl">Home</span></a>
+  <a href="#success-ribbon" data-s="success-ribbon"><span class="lbl">Metrics</span></a>
+  <a href="#about"          data-s="about"><span class="lbl">About</span></a>
+  <a href="#depts"          data-s="depts"><span class="lbl">Programs</span></a>
+  <a href="#placements"     data-s="placements"><span class="lbl">Placements</span></a>
+  <a href="#innovation"     data-s="innovation"><span class="lbl">Innovation</span></a>
+  <a href="#campus"         data-s="campus"><span class="lbl">Campus</span></a>
+  <a href="#news"           data-s="news"><span class="lbl">News</span></a>
+  <a href="#testimonials"   data-s="testimonials"><span class="lbl">Voices</span></a>
+  <a href="#leadership"     data-s="leadership"><span class="lbl">Chairman</span></a>
+  <a href="#contact"        data-s="contact"><span class="lbl">Contact</span></a>
+</div>
+
+<!-- HERO SECTION -->
+<section id="hero">
+  <div class="hero-bg">
+    <!-- Image Slider -->
+    <div class="hero-slider">
+      <img class="slide active" src="/Assets/core/IMG.webp" alt="DIET Satara Campus View 1" loading="eager"/>
+      <img class="slide" src="https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg" alt="DIET Satara Campus View 2"/>
+      <img class="slide" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="DIET Satara Campus View 3"/>
+      <img class="slide" src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg" alt="DIET Satara Campus View 4"/>
+    </div>
+  </div>
+
+  <!-- Bottom Wave SVG (Color customized to blend smoothly down) -->
+  <div class="hero-wave">
+    <div class="wave-track">
+      <svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--ink)"/>
+      </svg>
+      <svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--ink)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- MOVED HERO CONTENT -->
+<section id="hero-content">
+  <div class="hero-inner">
+    <!-- Left content -->
+    <div class="reveal-left">
+      <div class="hero-eyebrow">
+        <span class="hero-dot"></span>
+        <span>Dnyanshree Institute of Engineering &amp; Technology, Satara</span>
+      </div>
+      <h1>Engineering the<br><em>Innovators</em><br>of Tomorrow</h1>
+      <p class="hero-sub" style="color: rgba(255, 255, 255, 0.72); font-size: 1.05rem; line-height: 1.8; max-width: 40rem; margin-bottom: 2.5rem;">Empowering the next generation of global tech leaders through cutting-edge education, world-class infrastructure, and industry-first curriculum at DIET Satara.</p>
+      <div class="hero-actions">
+        <a href="/admission_process.html" class="btn btn-gold">Admissions 2026 <i class="fas fa-arrow-right"></i></a>
+        <a href="/infra.html" class="btn btn-glass"><i class="fas fa-play-circle"></i> Virtual Campus Tour</a>
+        <a href="/contact.html" class="btn btn-white" style="color:var(--navy);">Enquire Now</a>
+      </div>
+      <!-- Enhanced Hero Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat stagger-1">
+          <strong>98%</strong>
+          <span>Placement Rate</span>
+        </div>
+        <div class="hero-stat stagger-2">
+          <strong>12+</strong>
+          <span>Industrial MOUs</span>
+        </div>
+        <div class="hero-stat stagger-3">
+          <strong>NAAC B+</strong>
+          <span>Accredited</span>
+        </div>
+        <div class="hero-stat stagger-4">
+          <strong>1500+</strong>
+          <span>Engineers Placed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enquiry Card -->
+    <div class="hero-card reveal-right">
+      <h3><i class="fas fa-graduation-cap" style="color:var(--gold);"></i> Quick Enquiry</h3>
+      <form class="hc-form" action="/includes/submit_enquiry.php" method="POST">
+        <input type="text" name="name" placeholder="Your Full Name" required/>
+        <input type="tel" name="mobile" placeholder="Mobile Number" required/>
+        <input type="email" name="email" placeholder="Email Address" required/>
+        <select name="program" required>
+          <option value="">— Select Program —</option>
+          <option>B.Tech — Computer Science &amp; Engg.</option>
+          <option>B.Tech — Civil &amp; Environmental</option>
+          <option>B.Tech — Electrical &amp; Computer</option>
+          <option>B.Tech — Electronics &amp; Telecom</option>
+          <option>B.Tech — Mechanical &amp; Mechatronics</option>
+          <option>Diploma — Computer Science</option>
+          <option>Diploma — Electronics &amp; Telecom</option>
+        </select>
+        <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;">Submit Enquiry <i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- SUCCESS RIBBON -->
+<section id="success-ribbon">
+  <div class="shape-divider-top">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--navy-m)"/>
+    </svg>
+  </div>
+
+  <div class="ribbon-inner">
+    <div class="ribbon-stat reveal stagger-1">
+      <div class="ribbon-icon"><i class="fas fa-user-tie"></i></div>
+      <strong class="ribbon-num" data-target="1500">0</strong>
+      <span class="ribbon-lbl">True Engineers</span>
+    </div>
+    <div class="ribbon-stat reveal stagger-2">
+      <div class="ribbon-icon"><i class="fas fa-building"></i></div>
+      <strong class="ribbon-num" data-target="150">0</strong>
+      <span class="ribbon-lbl">Recruiters</span>
+    </div>
+    <div class="ribbon-stat reveal stagger-3">
+      <div class="ribbon-icon"><i class="fas fa-briefcase"></i></div>
+      <strong class="ribbon-num" data-target="1000">0</strong>
+      <span class="ribbon-lbl">Placements</span>
+    </div>
+    <div class="ribbon-stat reveal stagger-4">
+      <div class="ribbon-icon"><i class="fas fa-award"></i></div>
+      <strong class="ribbon-num" data-target="3000">0</strong>
+      <span class="ribbon-lbl">Scholarships</span>
+    </div>
+    <div class="ribbon-stat reveal stagger-5">
+      <div class="ribbon-icon"><i class="fas fa-handshake"></i></div>
+      <strong class="ribbon-num" data-target="12">0</strong><span style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:2.4rem;line-height:1">+</span>
+      <span class="ribbon-lbl">MOUs</span>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,100 C300,0 900,0 1200,100 L1200,120 L0,120 Z" fill="var(--cream)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ABOUT DIET -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-grid">
+      <!-- Image Column -->
+      <div class="about-img-wrap reveal-left">
+        <div class="about-main-img">
+          <img src="/Assets/core/IMG.webp" alt="DIET Campus"/>
+        </div>
+        <div class="about-float">
+          <i class="fas fa-award"></i>
+          <span>NAAC<br/>B+ Grade</span>
+        </div>
+        <div class="about-badge-sm">
+          <strong>2012</strong>
+          <span>Est. Year</span>
+        </div>
+        <div class="about-badge-top">
+          <i class="fab fa-redhat"></i>
+          <span>Red Hat Premier Partner</span>
+        </div>
+      </div>
+
+      <!-- Text Column -->
+      <div class="reveal-right">
+        <div class="sec-eyebrow"><span class="bar"></span> About Us <span class="bar"></span></div>
+        <h2 class="sec-title">Shaping Minds,<br/>Building <em>Futures</em></h2>
+        <p class="sec-sub">Dnyanshree Institute of Engineering &amp; Technology (DIET), Satara — a well-known engineering institute founded in 2012 by the great visionary <strong>Hon. Chairman Mr. Dnyaneshwar B. Wangde (Bhai)</strong> under Raosaheb Wangde Master Charitable Trust (RWMCT).</p>
+        <ul class="about-list" style="margin-top:1.5rem;">
+          <li><span class="about-bullet"></span>AICTE approved, DTE Mumbai approved, DBATU Lonere &amp; MSBTE affiliated institution with consistent academic excellence.</li>
+          <li><span class="about-bullet"></span>Modern, well-facilitated campus with state-of-the-art labs, AI/Data Science centre, and Mitsubishi Automation Skill Development Centre.</li>
+          <li><span class="about-bullet"></span>University toppers consistently produced since inception — dedicated to holistic student development.</li>
+          <li><span class="about-bullet"></span>Industry partnerships with Red Hat, AWS Academy, Mitsubishi Electric, and 12+ companies through formal MOUs.</li>
+        </ul>
+        <div class="about-features">
+          <div class="about-feat"><i class="fas fa-university"></i><span>Modern Campus</span></div>
+          <div class="about-feat"><i class="fas fa-user-graduate"></i><span>Top Placements</span></div>
+          <div class="about-feat"><i class="fas fa-medal"></i><span>NAAC B+ Accredited</span></div>
+          <div class="about-feat"><i class="fas fa-book-open"></i><span>Academic Excellence</span></div>
+          <div class="about-feat"><i class="fas fa-lightbulb"></i><span>Innovation Hub</span></div>
+          <div class="about-feat"><i class="fas fa-handshake"></i><span>Industry Connect</span></div>
+        </div>
+        <div style="margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="/about-dnyanshree.html" class="btn btn-gold">Learn More <i class="fas fa-arrow-right"></i></a>
+          <a href="/contact.html" class="btn btn-outline-dark">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--white)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- Rest of original page elements remain unchanged -->
+<section id="depts" class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:1rem;">
+      <div class="sec-eyebrow" style="justify-content:center;"><span class="bar"></span> Academic Programs <span class="bar"></span></div>
+      <h2 class="sec-title">Explore Our <em>Departments</em></h2>
+      <p class="sec-sub" style="max-width:36rem;margin:.5rem auto 0;">Six flagship degree programs and three diploma programs designed for the modern engineer.</p>
+    </div>
+    <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:2.5rem;flex-wrap:wrap;" class="reveal">
+      <button class="dept-tab active" onclick="switchDept(this,'degree')">Degree B.Tech</button>
+      <button class="dept-tab" onclick="switchDept(this,'diploma')">Diploma</button>
+    </div>
+    <div id="dept-degree" class="dept-panel active">
+      <div class="dept-card reveal stagger-1" style="--bg-img: url('https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg');" data-title="Computer Science &amp; Engineering" data-desc="AI, ML, cloud computing, cybersecurity, and full-stack development. Our industry-partnered curriculum with Red Hat and AWS Academy certifications ensures you are ready for top tech roles. Dive deeper into algorithms, data structures, and software engineering principles to lead the tech revolution." data-icon="fas fa-laptop-code" data-seats="120 Seats" data-fees="₹1.02L/yr" data-link="/cse.html">
+        <div class="dept-card-icon"><i class="fas fa-laptop-code"></i></div>
+        <h3>Computer Science &amp; Engineering</h3>
+        <p>AI, ML, cloud computing, cybersecurity, and full-stack development. Industry-partnered curriculum with Red Hat, AWS Academy certifications.</p>
+        <div class="dept-card-meta"><span class="dept-tag">120 Seats</span><span class="dept-tag">₹1.02L/yr</span></div>
+        <a href="/cse.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal stagger-2" style="--bg-img: url('https://images.pexels.com/photos/585419/pexels-photo-585419.jpeg');" data-title="Civil &amp; Environmental Engineering" data-desc="Learn structural design, construction management, environmental systems, and sustainable infrastructure development. Featuring modern CAD/BIM tools and extensive fieldwork opportunities." data-icon="fas fa-hard-hat" data-seats="30 Seats" data-fees="₹1.02L/yr" data-link="/civil.html">
+        <div class="dept-card-icon"><i class="fas fa-hard-hat"></i></div>
+        <h3>Civil &amp; Environmental Engineering</h3>
+        <p>Structural design, construction management, environmental systems, and sustainable infrastructure development with modern CAD/BIM tools.</p>
+        <div class="dept-card-meta"><span class="dept-tag">30 Seats</span><span class="dept-tag">₹1.02L/yr</span></div>
+        <a href="/civil.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal stagger-3" style="--bg-img: url('https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg');" data-title="Electrical &amp; Computer Engineering" data-desc="Master power systems, control engineering, embedded systems and computer interfaces. Gain a competitive edge with our industry-aligned Mitsubishi Automation skill programs." data-icon="fas fa-bolt" data-seats="60 Seats" data-fees="₹1.02L/yr" data-link="/electrical.html">
+        <div class="dept-card-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Electrical &amp; Computer Engineering</h3>
+        <p>Power systems, control engineering, embedded systems and computer interfaces. Industry-aligned with Mitsubishi Automation skill programs.</p>
+        <div class="dept-card-meta"><span class="dept-tag">60 Seats</span><span class="dept-tag">₹1.02L/yr</span></div>
+        <a href="/electrical.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal stagger-1" style="--bg-img: url('https://images.pexels.com/photos/3401402/pexels-photo-3401402.jpeg');" data-title="Electronics &amp; Telecommunication" data-desc="Specialized focus on signal processing, wireless communication, VLSI design, and IoT systems. Built upon a strong industry connect with leading electronics firms globally." data-icon="fas fa-broadcast-tower" data-seats="60 Seats" data-fees="₹1.02L/yr" data-link="/etc.html">
+        <div class="dept-card-icon"><i class="fas fa-broadcast-tower"></i></div>
+        <h3>Electronics &amp; Telecommunication</h3>
+        <p>Signal processing, wireless communication, VLSI design, and IoT systems. Strong industry connect with leading electronics firms.</p>
+        <div class="dept-card-meta"><span class="dept-tag">60 Seats</span><span class="dept-tag">₹1.02L/yr</span></div>
+        <a href="/etc.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal stagger-2" style="--bg-img: url('https://images.pexels.com/photos/162553/keys-workshop-mechanic-tools-162553.jpeg');" data-title="Mechanical &amp; Mechatronics" data-desc="Focusing on additive manufacturing, robotics, CNC machining, and sustainable design. Featuring state-of-the-art AutoCAD, SolidWorks, and 3D printing facilities right on campus." data-icon="fas fa-cogs" data-seats="60 Seats" data-fees="₹1.02L/yr" data-link="/mech.html">
+        <div class="dept-card-icon"><i class="fas fa-cogs"></i></div>
+        <h3>Mechanical &amp; Mechatronics</h3>
+        <p>Additive manufacturing, robotics, CNC machining, and sustainable design. AutoCAD, SolidWorks, and 3D printing facilities on campus.</p>
+        <div class="dept-card-meta"><span class="dept-tag">60 Seats</span><span class="dept-tag">₹1.02L/yr</span></div>
+        <a href="/mech.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal stagger-3" style="--bg-img: url('https://images.pexels.com/photos/3735349/pexels-photo-3735349.jpeg');" data-title="Applied Sciences &amp; Engineering" data-desc="Core foundation sciences covering complex mathematics, physics, and chemistry — perfectly bridging the gap between scientific theory and real-world engineering applications." data-icon="fas fa-atom" data-seats="Foundation" data-fees="—" data-link="/gsh.html">
+        <div class="dept-card-icon"><i class="fas fa-atom"></i></div>
+        <h3>Applied Sciences &amp; Engineering</h3>
+        <p>Foundation sciences — mathematics, physics, chemistry — bridging theory and engineering applications for cross-disciplinary excellence.</p>
+        <div class="dept-card-meta"><span class="dept-tag">Foundation</span></div>
+        <a href="/gsh.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+    </div>
+    <div id="dept-diploma" class="dept-panel">
+      <div class="dept-card reveal" style="--bg-img: url('https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg');" data-title="Diploma — Computer Science" data-desc="A highly practical-focused diploma covering computer engineering with industry-relevant skills in programming, networking, hardware, and modern software development." data-icon="fas fa-laptop-code" data-seats="60 Seats" data-fees="₹76K/yr" data-link="/diploma-cse.html">
+        <div class="dept-card-icon"><i class="fas fa-laptop-code"></i></div>
+        <h3>Diploma — Computer Science</h3>
+        <p>Practical-focused diploma in computer engineering with industry-relevant skills in programming, networking, and software development.</p>
+        <div class="dept-card-meta"><span class="dept-tag">60 Seats</span><span class="dept-tag">₹76K/yr</span></div>
+        <a href="/diploma-cse.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal" style="--bg-img: url('https://images.pexels.com/photos/3401403/pexels-photo-3401403.jpeg');" data-title="Diploma — Electronics &amp; Telecom" data-desc="A hands-on diploma covering crucial electronics fundamentals, vast communication systems, and practical circuit design crafted for real-world industrial applications." data-icon="fas fa-broadcast-tower" data-seats="30 Seats" data-fees="₹76K/yr" data-link="/diploma-etc.html">
+        <div class="dept-card-icon"><i class="fas fa-broadcast-tower"></i></div>
+        <h3>Diploma — Electronics &amp; Telecom</h3>
+        <p>Hands-on diploma covering electronics fundamentals, communication systems, and practical circuit design for real-world applications.</p>
+        <div class="dept-card-meta"><span class="dept-tag">30 Seats</span><span class="dept-tag">₹76K/yr</span></div>
+        <a href="/diploma-etc.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+      <div class="dept-card reveal" style="--bg-img: url('https://images.pexels.com/photos/3735349/pexels-photo-3735349.jpeg');" data-title="Diploma — Applied Sciences" data-desc="A robust foundation in engineering sciences that provides vital skills across mathematical, physical, and chemical principles necessary for all technical careers." data-icon="fas fa-flask" data-seats="Available" data-fees="—" data-link="/diploma-ASE.html">
+        <div class="dept-card-icon"><i class="fas fa-flask"></i></div>
+        <h3>Diploma — Applied Sciences</h3>
+        <p>Strong foundation in engineering sciences providing skills across mathematical, physical, and chemical principles for technical careers.</p>
+        <div class="dept-card-meta"><span class="dept-tag">Available</span></div>
+        <a href="/diploma-ASE.html" class="dept-card-cta">Explore Details <i class="fas fa-expand"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="placements" class="section">
+  <div class="shape-divider-top">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,20 C400,120 800,120 1200,20 L1200,120 L0,120 Z" fill="var(--white)"/>
+    </svg>
+  </div>
+
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="reveal" style="text-align:center;margin-bottom:3.5rem;">
+      <div class="sec-eyebrow" style="justify-content:center;color:var(--gold-lt);"><span class="bar" style="background:var(--gold-lt);"></span> Career Excellence <span class="bar" style="background:var(--gold-lt);"></span></div>
+      <h2 class="sec-title white">Impeccable <em>Placements</em></h2>
+      <p class="sec-sub" style="color:rgba(255,255,255,.55);max-width:36rem;margin:.5rem auto 0;">Top placement record in core companies with highest packages in the Satara district. 1000+ placements in 150+ companies.</p>
+    </div>
+
+    <div class="placement-layout reveal">
+      <div>
+        <div class="pl-stats-grid">
+          <div class="pl-stat">
+            <span class="pl-num" data-target="95">0</span><span class="pl-unit">%</span>
+            <div class="pl-desc">Placement Rate</div>
+          </div>
+          <div class="pl-stat">
+            <span class="pl-num" data-target="40">0</span><span class="pl-unit">LPA</span>
+            <div class="pl-desc">Highest Package</div>
+          </div>
+          <div class="pl-stat">
+            <span class="pl-num" data-target="150">0</span><span class="pl-unit">+</span>
+            <div class="pl-desc">Recruiters</div>
+          </div>
+          <div class="pl-stat">
+            <span class="pl-num" data-target="1000">0</span><span class="pl-unit">+</span>
+            <div class="pl-desc">Total Placed</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-eyebrow" style="color:var(--gold-lt);margin-bottom:1.25rem;"><span class="bar" style="background:var(--gold-lt);"></span> Our Achievements</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:#fff;margin-bottom:1rem;">1000+ Placements<br/><em style="color:var(--gold);">in 150+ Companies</em></h3>
+        <p style="color:rgba(255,255,255,.55);font-size:.88rem;line-height:1.75;margin-bottom:1.5rem;">Our students annually avail lucrative jobs in the most distinguished industries — from IT giants to core engineering firms, FMCG, automobiles, and startups.</p>
+        <a href="/placement.html" class="btn btn-gold" style="font-size:.8rem;">View Placement Details <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <!-- Recruiter Marquee — Premium -->
+    <div class="rec-marquee-wrap reveal">
+      <div class="rec-track">
+        <span class="rec-item">Google</span><span class="rec-item">Microsoft</span><span class="rec-item">TCS</span><span class="rec-item">Infosys</span><span class="rec-item">Wipro</span><span class="rec-item">Cognizant</span><span class="rec-item">Capgemini</span><span class="rec-item">Accenture</span><span class="rec-item">Siemens</span><span class="rec-item">NVIDIA</span><span class="rec-item">KPIT</span><span class="rec-item">Persistent</span><span class="rec-item">Coditas</span><span class="rec-item">DXC Tech</span><span class="rec-item">John Deere</span><span class="rec-item">Bajaj Auto</span><span class="rec-item">LTI Mindtree</span><span class="rec-item">Tech Mahindra</span><span class="rec-item">Vanderlande</span><span class="rec-item">Sandvik</span><span class="rec-item">HP</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,100 C300,0 900,0 1200,100 L1200,120 L0,120 Z" fill="var(--cream)"/>
+    </svg>
+  </div>
+</section>
+
+<section id="innovation" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:3.5rem;">
+      <div class="sec-eyebrow" style="justify-content:center;"><span class="bar"></span> Student Innovation <span class="bar"></span></div>
+      <h2 class="sec-title">Where Ideas Become <em>Reality</em></h2>
+    </div>
+    <div class="innovation-grid">
+      <div class="innov-card reveal-left">
+        <div class="innov-badge"><i class="fas fa-microchip"></i> IoT Project</div>
+        <h3>Smart Campus IoT</h3>
+        <div class="innov-img"><img src="https://images.pexels.com/photos/3912981/pexels-photo-3912981.jpeg" alt="Smart Campus IoT" loading="lazy"/></div>
+      </div>
+      <div class="innov-card reveal-right">
+        <div class="innov-badge"><i class="fas fa-brain"></i> AI Project</div>
+        <h3>AI-Driven Health Diagnostics</h3>
+        <div class="innov-img"><img src="https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg" alt="AI Health Diagnostics" loading="lazy"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--navy)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- CAMPUS LIFE -->
+<section id="campus" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:3.5rem;">
+      <div class="sec-eyebrow" style="justify-content:center;color:var(--gold-lt);"><span class="bar" style="background:var(--gold-lt);"></span> Life at DIET <span class="bar" style="background:var(--gold-lt);"></span></div>
+      <h2 class="sec-title white">Campus Life &amp; <em>Infrastructure</em></h2>
+      <p class="sec-sub" style="color:rgba(255,255,255,.5);max-width:36rem;margin:.5rem auto 0;">A modern, well-facilitated campus designed to inspire creativity, collaboration, and lifelong learning.</p>
+    </div>
+    <div class="campus-grid reveal">
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg" alt="Central Library" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-book-open"></i></div>
+            <h4>Central Library</h4>
+            <p>10,000+ volumes, digital databases &amp; reading halls</p>
+          </div>
+        </div>
+      </div>
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="AI & Data Science Lab" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-brain"></i></div>
+            <h4>AI &amp; Data Science Lab</h4>
+            <p>NVIDIA GPUs · TensorFlow · Real-world datasets</p>
+          </div>
+        </div>
+      </div>
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg" alt="Smart Classroom" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <h4>Smart Classrooms</h4>
+            <p>Interactive boards · AC halls · Digital teaching</p>
+          </div>
+        </div>
+      </div>
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/3861972/pexels-photo-3861972.jpeg" alt="Automation Lab" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-cogs"></i></div>
+            <h4>Mitsubishi Automation Lab</h4>
+            <p>Industry 4.0 · PLC · Robotics training</p>
+          </div>
+        </div>
+      </div>
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg" alt="Innovation Lab" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-lightbulb"></i></div>
+            <h4>Innovation &amp; Incubation Lab</h4>
+            <p>3D printers · IoT kits · Startup support</p>
+          </div>
+        </div>
+      </div>
+      <div class="campus-card">
+        <img class="campus-img" src="https://images.pexels.com/photos/3769121/pexels-photo-3769121.jpeg" alt="Seminar Hall" loading="lazy"/>
+        <div class="campus-overlay">
+          <div class="campus-caption">
+            <div class="campus-caption-icon"><i class="fas fa-microphone"></i></div>
+            <h4>Seminar &amp; Auditorium</h4>
+            <p>500-seat auditorium for events &amp; conferences</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;" class="reveal">
+      <a href="/infra.html" class="btn btn-outline-gold" style="font-size:.85rem;"><i class="fas fa-images"></i> Explore Full Campus</a>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,100 C300,0 900,0 1200,100 L1200,120 L0,120 Z" fill="var(--cream)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- NEWS & ANNOUNCEMENTS -->
+<section id="news" class="section">
+  <div class="container">
+    <div class="news-layout">
+      <div>
+        <div class="reveal" style="margin-bottom:2rem;">
+          <div class="sec-eyebrow"><span class="bar"></span> Latest Updates <span class="bar"></span></div>
+          <h2 class="sec-title">News &amp; <em>Announcements</em></h2>
+        </div>
+        <div class="news-feed reveal">
+          <div class="news-item">
+            <img class="news-img" src="/img/2025-26/latest-news/google.jpeg" alt="Google Placement" onerror="this.src='https://images.pexels.com/photos/3912981/pexels-photo-3912981.jpeg'"/>
+            <div class="news-body">
+              <div class="news-date"><i class="fas fa-calendar-alt" style="margin-right:.3rem;"></i>07 August 2025</div>
+              <h5>Student Soham Gholap Secures Google Placement at ₹40 LPA</h5>
+              <p class="news-excerpt">A proud moment for DIET — student bags prestigious position at Google, showcasing institute's commitment to quality education.</p>
+            </div>
+          </div>
+          <div class="news-item">
+            <img class="news-img" src="/img/2025-26/latest-news/RHA.jpg" alt="Red Hat Academy" onerror="this.src='https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg'"/>
+            <div class="news-body">
+              <div class="news-date"><i class="fas fa-calendar-alt" style="margin-right:.3rem;"></i>08 July 2025</div>
+              <h5>DIET Recognized as Premier Partner 2025 of Red Hat Academy</h5>
+              <p class="news-excerpt">Exclusive recognition cementing our position as a leading Linux and open-source education institution.</p>
+            </div>
+          </div>
+          <div class="news-item">
+            <img class="news-img" src="/img/2025-26/latest-news/WhatsApp%20Image%202025-07-10%20at%201.56.54%20PM.jpeg" alt="AI Centre" onerror="this.src='https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg'"/>
+            <div class="news-body">
+              <div class="news-date"><i class="fas fa-calendar-alt" style="margin-right:.3rem;"></i>30 June 2025</div>
+              <h5>Grand Inauguration of AI &amp; Data Science Centre</h5>
+              <p class="news-excerpt">Former Maharashtra DGP Praveen Dixit inaugurates state-of-the-art AI &amp; Data Science Centre at DIET Satara.</p>
+            </div>
+          </div>
+          <div class="news-item">
+            <img class="news-img" src="/img/2025-26/latest-news/Rotarex_2025.jpeg" alt="Rotarex" onerror="this.src='https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg'"/>
+            <div class="news-body">
+              <div class="news-date"><i class="fas fa-calendar-alt" style="margin-right:.3rem;"></i>14 July 2025</div>
+              <h5>Rotarex 2025 — State-Level Project Exhibition at DIET</h5>
+              <p class="news-excerpt">Grand state-level project exhibition organized jointly by DIET and Rotary Club of Satara Charitable Trust.</p>
+            </div>
+          </div>
+          <div class="news-item">
+            <img class="news-img" src="/img/2025-26/latest-news/against_CAP.jpeg" alt="ACAP Admissions" onerror="this.src='https://images.pexels.com/photos/3769121/pexels-photo-3769121.jpeg'"/>
+            <div class="news-body">
+              <div class="news-date"><i class="fas fa-calendar-alt" style="margin-right:.3rem;"></i>06 September 2025</div>
+              <h5>Admissions Open — Against CAP Vacancy (ACAP) 2025-26</h5>
+              <p class="news-excerpt">Applications open for First Year and Direct Second Year B.Tech under ACAP for academic year 2025-26.</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;" class="reveal">
+          <a href="/news/news2.html" class="btn btn-outline-dark" style="font-size:.8rem;"><i class="fas fa-newspaper"></i> View All News</a>
+        </div>
+      </div>
+
+      <!-- Enquiry Sidebar -->
+      <div class="reveal-right">
+        <div class="news-sidebar-card">
+          <h3>Apply for <em style="color:var(--gold);">2026</em></h3>
+          <p>Admissions are open for B.Tech and Diploma programs. Don't miss your chance to join DIET Satara.</p>
+          <form class="enquiry-form" action="/includes/submit_enquiry.php" method="POST">
+            <input type="text" name="name" placeholder="Your Full Name" required/>
+            <input type="tel" name="mobile" placeholder="Mobile Number" required/>
+            <input type="email" name="email" placeholder="Email Address"/>
+            <select name="program" required>
+              <option value="">— Select Program —</option>
+              <option>Degree — B.Tech</option>
+              <option>Diploma</option>
+            </select>
+            <select name="branch">
+              <option value="">— Select Branch —</option>
+              <option>Computer Science &amp; Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Electrical Engineering</option>
+              <option>E&amp;TC Engineering</option>
+            </select>
+            <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;">Submit Enquiry <i class="fas fa-arrow-right"></i></button>
+          </form>
+          <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.1);">
+            <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem;">
+              <i class="fas fa-phone" style="color:var(--gold);"></i>
+              <span style="color:rgba(255,255,255,.55);font-size:.82rem;">+91 8600009009</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.65rem;">
+              <i class="fas fa-envelope" style="color:var(--gold);"></i>
+              <span style="color:rgba(255,255,255,.55);font-size:.82rem;">admissions@diet.edu.in</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--ink)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:3.5rem;">
+      <div class="sec-eyebrow" style="justify-content:center;color:var(--gold-lt);"><span class="bar" style="background:var(--gold-lt);"></span> Voices <span class="bar" style="background:var(--gold-lt);"></span></div>
+      <h2 class="sec-title white">What People Say About <em>DIET</em></h2>
+    </div>
+    <div class="test-grid">
+      <div class="test-card reveal stagger-1">
+        <div class="test-quote-icon">"</div>
+        <p class="test-text">ज्ञानश्रीमध्ये येऊन खूपच आनंद वाटलं. अतिशय नयनरम्य वास्तूमध्ये इतक्या आधुनिक आणि गरजेच्या विषयावर सेमिनार ठेवल्याबद्दल अभिनंदन. खूपच छान वातावरण, खूपच शिस्तीचं वाटलं.</p>
+        <div class="test-author">
+          <div class="test-avatar-placeholder"><i class="fas fa-user"></i></div>
+          <div>
+            <div class="test-name">डॉ. अच्युत गोडबोले</div>
+            <div class="test-role">प्रसिद्ध वक्ते व लेखक</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal stagger-2">
+        <div class="test-quote-icon">"</div>
+        <p class="test-text">ग्रामीण भागातील विद्यार्थ्यांना उत्तमोत्तम शिक्षण मिळावे या ध्येयाने झटणाऱ्या ज्ञानश्रीच्या सर्व प्राध्यापक व कर्मचाऱ्यांचे खूपच कौतुक वाटते. एवढ्या चांगल्या वास्तूला भेट दिल्याचे समाधान कायम मनात राहील. खूप खूप शुभेच्छा.</p>
+        <div class="test-author">
+          <div class="test-avatar-placeholder"><i class="fas fa-microphone"></i></div>
+          <div>
+            <div class="test-name">Vinit Jawale</div>
+            <div class="test-role">Sr. Journalist, Zee 24 Taas</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal stagger-3">
+        <div class="test-quote-icon">"</div>
+        <p class="test-text">One of its kind in the world. Very lovely and great. Inspired by such a wonderful college of Engineering for poor and village students. Excellent work done by you. Would love to help poor and needy students as required.</p>
+        <div class="test-author">
+          <div class="test-avatar-placeholder"><i class="fas fa-user-tie"></i></div>
+          <div>
+            <div class="test-name">Farrokh N. Cooper</div>
+            <div class="test-role">Chairman &amp; MD, Cooper Corp. Satara</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,100 C300,0 900,0 1200,100 L1200,120 L0,120 Z" fill="var(--cream)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- LEADERSHIP / CHAIRMAN -->
+<section id="leadership" class="section">
+  <div class="container--sm">
+    <div class="reveal" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-eyebrow" style="justify-content:center;"><span class="bar"></span> Leadership <span class="bar"></span></div>
+      <h2 class="sec-title">A Vision Born of <em>Purpose</em></h2>
+    </div>
+    <div class="leadership-card reveal">
+      <div class="leader-photo-wrap">
+        <div class="leader-photo-frame">
+          <img class="leader-photo" src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg" alt="Hon. Chairman Mr. Dnyaneshwar B. Wangde" onerror="this.style.display='none'"/>
+        </div>
+        <div class="leader-name">Hon. Mr. Dnyaneshwar B. Wangde</div>
+        <div class="leader-title">Founder &amp; Chairman, RWMCT</div>
+        <div style="margin-top:1rem;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
+          <span style="background:rgba(200,155,60,.12);border:1px solid rgba(200,155,60,.25);color:var(--gold);font-size:.62rem;padding:.2rem .7rem;border-radius:50px;font-weight:600;">Visionary</span>
+          <span style="background:rgba(200,155,60,.12);border:1px solid rgba(200,155,60,.25);color:var(--gold);font-size:.62rem;padding:.2rem .7rem;border-radius:50px;font-weight:600;">Philanthropist</span>
+        </div>
+      </div>
+      <div class="leader-msg">
+        <div class="leader-qm">"</div>
+        <div class="leader-quote">Every student from every village deserves the <em>best engineering education</em> the world can offer.</div>
+        <p class="leader-body">Welcome to Dnyanshree Institute of Engineering &amp; Technology — founded with one singular vision: to make world-class engineering education accessible to students from rural and semi-urban backgrounds in the Satara region.</p>
+        <p class="leader-body">Since our establishment in 2012, we have consistently delivered on that promise — building modern infrastructure, attracting dynamic faculty, and forging deep industry partnerships that give our students every advantage as they enter their careers.</p>
+        <p class="leader-body">Our students have reached Google, TCS, Infosys, Siemens, and hundreds of other leading companies. We are humbled and inspired by their success — and committed to creating even greater opportunities for those who come after them.</p>
+        <div class="leader-quote">The better the society, the <em>stronger</em> the country.</div>
+        <p class="leader-body">Greetings,</p>
+        <p class="leader-body">I am always inspired by the distinct social contributions of Late Shri. Raosaheb Bhausaheb Wangde Master and Late Shri. Bapusaheb Ramchandra Wangde. To continue this legacy, the Raosaheb Wangde Master Charitable Trust was established in the year 1994.</p>
+        <p class="leader-body">Empowering the youth with legitimate education builds a stronger society. It is evident that the majority of youth especially from rural areas approaching cities for education purpose, which may be unaffordable to them. Lack of facilitation near their places is the one of the major reasons.</p>
+        <p class="leader-body">In this scenario, we decided to establish educational institutes at rural sector. In today's emerging scenario, technological education plays a vital role. Our Dnyanshree Institute of Engineering and Technology (DIET) is therefore established at the base of holistic fort Sajjangad. The institute’s modern campus creates complementary environment for the education. We emphasis on appointing expert and experienced teachers to impart quality education. The well-facilitated institute eternally develops competent and socially responsible engineers. Students are either becoming entrepreneurs or serving in public sectors and in national/multinational companies. Some of them are pursuing higher education in India or abroad.</p>
+        <p class="leader-body">Thank you.</p>
+        <div class="leader-sig">D. Wangde</div>
+        <div style="margin-top:1.5rem;">
+          <a href="/chairperson-desk.html" class="btn btn-gold" style="font-size:.82rem;"><i class="fas fa-user-tie"></i> Full Message</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shape-divider-bottom">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" fill="var(--white)"/>
+    </svg>
+  </div>
+</section>
+
+<!-- UNIVERSITY RANKERS STRIP -->
+<div class="rankers-strip" style="padding-bottom: 4.5rem;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--navy);">University <em style="color:var(--gold);">Rankers</em> &amp; Toppers</span>
+    </div>
+    <div style="overflow:hidden;position:relative;">
+      <div class="rankers-track">
+        <img src="/Rankers/Asset 3.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 4.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 5.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 6.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 7.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 8.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 9.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 10.png" alt="Ranker" loading="lazy"/>
+        <!-- duplicate for seamless loop -->
+        <img src="/Rankers/Asset 3.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 4.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 5.png" alt="Ranker" loading="lazy"/>
+        <img src="/Rankers/Asset 6.png" alt="Ranker" loading="lazy"/>
+      </div>
+    </div>
+  </div>
+  
+  <div class="shape-divider-bottom" style="z-index: 5;">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,100 C300,0 900,0 1200,100 L1200,120 L0,120 Z" fill="var(--ink)"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Footer Placeholder -->
+<div id="footer-placeholder"></div>
+
+<!-- Department Interactive Modal -->
+<div id="dept-modal" class="dept-modal">
+  <div class="dept-modal-overlay"></div>
+  <div class="dept-modal-content">
+    <button class="dept-modal-close"><i class="fas fa-times"></i></button>
+    <div class="dept-modal-hero"></div>
+    <div class="dept-modal-body">
+      <div class="dept-modal-icon"><i class="fas fa-laptop-code"></i></div>
+      <h3 class="dept-modal-title">Department Title</h3>
+      <p class="dept-modal-desc">Department extensive description goes here.</p>
+      <div class="dept-modal-meta">
+        <div class="dept-modal-meta-item">
+          <i class="fas fa-users"></i>
+          <div>
+            <span class="lbl">Intake Capacity</span>
+            <span class="val" id="dm-seats">120 Seats</span>
+          </div>
+        </div>
+        <div class="dept-modal-meta-item">
+          <i class="fas fa-rupee-sign"></i>
+          <div>
+            <span class="lbl">Annual Fees</span>
+            <span class="val" id="dm-fees">₹1.02L/yr</span>
+          </div>
+        </div>
+      </div>
+      <a href="#" id="dm-link" class="btn btn-gold" style="width:100%;justify-content:center;padding:1rem;">Visit Full Department Page <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- Popup Admission Card -->
+<div id="admission-popup" class="admission-popup">
+  <div class="admission-popup-content">
+    <button class="ap-close" id="close-popup" aria-label="Close">&times;</button>
+    
+    <!-- Left Image Side -->
+    <div class="ap-image-side"></div>
+    
+    <!-- Right Form Side -->
+    <div class="ap-form-side">
+      <h2>Admissions <em>Open</em> 2026</h2>
+      <p>Secure your future with our industry-aligned programs. Apply today!</p>
+      <form action="/includes/submit_enquiry.php" method="POST">
+        <input type="text" name="name" placeholder="Your Full Name" required/>
+        <input type="tel" name="mobile" placeholder="Mobile Number" required/>
+        <input type="email" name="email" placeholder="Email Address" required/>
+        <select name="program" required>
+          <option value="">— Select Program —</option>
+          <option>B.Tech — Computer Science &amp; Engg.</option>
+          <option>B.Tech — Civil &amp; Environmental</option>
+          <option>B.Tech — Electrical &amp; Computer</option>
+          <option>B.Tech — Electronics &amp; Telecom</option>
+          <option>B.Tech — Mechanical &amp; Mechatronics</option>
+          <option>Diploma Programs</option>
+        </select>
+        <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 0.9rem; margin-top: 0.5rem;">Submit Enquiry <i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast-notification" class="toast">
+  <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+  <div class="toast-msg">
+    <h4>Success!</h4>
+    <p>Your request has been submitted successfully.</p>
+  </div>
+  <button class="toast-close" onclick="this.parentElement.classList.remove('show')"><i class="fas fa-times"></i></button>
+</div>
+
+<script src="/assets/js/script.js"></script>
+
+<script>
+  // Image Slider Logic
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll('.hero-slider .slide');
+    let currentSlide = 0;
+    
+    if (slides.length > 1) {
+      setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }, 5000); // Change image every 5 seconds
+    }
+  });
+
+  // Popup Admission Card Logic
+  document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById('admission-popup');
+    const closeBtn = document.getElementById('close-popup');
+    
+    // Show popup after 1.5 seconds
+    if (popup) {
+      setTimeout(() => {
+        popup.classList.add('show');
+      }, 1500);
+    }
+    
+    // Close popup handler
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        popup.classList.remove('show');
+      });
+    }
+    
+    // Close when clicking outside content
+    if (popup) {
+      popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+          popup.classList.remove('show');
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>
